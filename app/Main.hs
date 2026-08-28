@@ -4,13 +4,29 @@ import System.IO
 import qualified MyLib (someFunc)
 import System.Exit
 import System.Environment
+import Data.List
+import Data.Maybe
 
 donothing = return ()
-
+removeLineMod line
+  | "\\head{3}" `isPrefixOf` line = fromMaybe line (stripPrefix "\\head{3}" line)
+  | "\\head{2}" `isPrefixOf` line = fromMaybe line (stripPrefix "\\head{2}" line)
+  | "\\head{1}" `isPrefixOf` line = fromMaybe line (stripPrefix "\\head{1}" line)
+  | otherwise = line
+wrapLine line = 
+  let pMark = checkLineForMod line
+      cont = removeLineMod line
+  in "<" ++ pMark ++ ">" ++ cont ++ "</" ++ pMark ++ ">"
 wrapPara line = "<p>" ++ line ++ "</p>"
 failing reason = do
   putStrLn ("Failed: " ++ reason)
   exitFailure
+
+checkLineForMod line
+  | "\\head{3}" `isPrefixOf` line = "h3"
+  | "\\head{2}" `isPrefixOf` line = "h2"
+  | "\\head{1}" `isPrefixOf` line = "h1"
+  | otherwise = "p"
 
 main :: IO ()
 main = do
@@ -22,7 +38,7 @@ main = do
   filecont <- hGetContents file
   let htmlcontlist = []
   let linescontlist = lines filecont
-  let htmlLines = map wrapPara linescontlist
+  let htmlLines = map wrapLine linescontlist
   let htmlCont = unlines htmlLines
   -- let loop1 i
   --   | i <= (length (lines filecont)) = do
@@ -35,4 +51,3 @@ main = do
   --     loop1 (i + 1)
   --   | otherwise = donothing
   writeFile "out.html" htmlCont
-  MyLib.someFunc
