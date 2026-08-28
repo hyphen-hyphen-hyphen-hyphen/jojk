@@ -1,1 +1,6 @@
+# for testing
 lrn/
+# haskell build directory
+dist-newstyle/
+# yodel output
+out.html
