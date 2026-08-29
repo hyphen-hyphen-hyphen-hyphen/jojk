@@ -98,12 +98,12 @@ w :: String -> String
 w =
     let pm = clm
         c = rlm
-        pr = p . c
-    in \l -> "<" ++ pm l ++ ">" ++ pr l ++ "</" ++ pm l ++ ">"
+        pro = p . c
+    in \l -> "<" ++ pm l ++ ">" ++ pro l ++ "</" ++ pm l ++ ">"
 
 fl :: [Char] -> IO b
 fl r = do
-  putStrLn ("Failed: " ++ r)
+  putStrLn ("jojk misstag(oops): " ++ r)
   exitFailure
 
 clm :: [Char] -> String
@@ -116,6 +116,30 @@ clm line
 re = \l ->
   if l == "<p></p>" then "<br>" else l
 
+pr = do
+  putStrLn "     /)/)/) /).-') "
+  putStrLn "    ////((.'_.--'   .(\\(\\(\\                   n/(/.')_         . "
+  putStrLn "   ((((_/ .'      .-`)))))))                  `-._ ('.'        \\`(\\ "
+  putStrLn "  (_._ ` (         `.   (/ |                      \\ (           `-.\\ "
+  putStrLn "      `-. \\          `-.  /                        `.`.           \\ \\ "
+  putStrLn "         `.`.          | /                /)         \\ \\           | L "
+  putStrLn "           `.`._.      ||_               (()          `.\\          ) F "
+  putStrLn "   (`._      `. <    .'.-'                \\`-._____    ||        .' / "
+  putStrLn "    `(\\`._.._(\\(\\)_.'.'-------------.___   `-.(`._ `-./ /     _.' .' "
+  putStrLn "      (.-.| \\_`.__.-<     `.    . .-'   `-.   _> `-._((`.__.-'_.-' "
+  putStrLn "          (.--'   ' |    \\ \\     /| \\.-./ |\\ `-.   _.'>.___,-'`. "
+  putStrLn "             (  o  <      |     |  `o   o'  |  /(`'.-'   --.    \\ "
+  putStrLn "           .'     /      .'   _ |   |   |   |  ( .'/  o .-'   \\  | "
+  putStrLn "           (__.-.`-._  -'    '   \\  \\   /  /    ' /    _/      | J "
+  putStrLn "                 \\_  `.      _.__.L |   | J      (  .'\\`.    _/-./ "
+  putStrLn "                   `-<  .-L|'`-|  ||\\\\V/ ||       `'   L \\  /   / "
+  putStrLn "                      |J  ||    \\ ||||  |||            |  |_|  ) "
+  putStrLn "                      ||  ||     )||||  |||            || / ||J "
+  putStrLn "                      (|  (|    / |||)  (||            |||  ||| "
+  putStrLn "                      ||  ||   / /||||  |||            |(|  ||| "
+  putStrLn "                      ||  ||  / / ||||  |||            |||  ||| "
+  putStrLn "_______.------.______/ |_/ |_/_|_/// |__| \\\\__________// |--( \\\\--------- "
+  putStrLn "                    '-' '-'       '-'    `-`           '-'   `-` "
 
 main :: IO ()
 main = do
@@ -131,3 +155,4 @@ main = do
   let hl2 = map re hl
   let hc = unlines hl2
   writeFile on hc
+  pr
