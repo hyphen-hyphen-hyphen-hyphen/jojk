@@ -6,6 +6,7 @@ import System.Environment
 import Data.List
 import Data.Maybe
 
+donothing :: IO ()
 donothing = return ()
 
 removeLineMod :: String -> String
@@ -18,6 +19,24 @@ removeLineMod line
 fndBckSlshPos :: String -> Maybe Int
 fndBckSlshPos line = elemIndex '\\' line
 
+checkIfthinginlist :: Eq t => t -> [t] -> Bool
+checkIfthinginlist thing list
+  | list == [] = False
+  | otherwise =
+    if head list == thing
+      then True
+    else let newlist = drop 1 list
+    in checkIfthinginlist thing newlist
+
+checkwherethingisinlist :: (Eq t1, Num t2) =>
+                           t1 -> [t1] -> t2 -> t2
+checkwherethingisinlist thing list itnumber =
+  if head list == thing
+    then itnumber
+  else let newlist = drop 1 list
+           newitnum = itnumber + 1
+       in checkwherethingisinlist thing newlist newitnum
+
 findEndOfCommand :: String -> Int -> Int
 findEndOfCommand line bckpos =
   let afterBackslash = drop (bckpos + 1) line
@@ -27,6 +46,7 @@ findEndOfCommand line bckpos =
       contentLen = length (takeWhile (/= '}') afterOpen)
   in openBracePos + 1 + contentLen
 
+specLink :: [Char] -> [Char] -> [Char]
 specLink content rest =
   let secContent = takeWhile (/= '}') (drop 1 rest)
   in "<a href=\"" ++ secContent ++ "\">" ++ content ++ "</a>"
@@ -61,6 +81,7 @@ procLine line
                     in before ++ "<h" ++ level ++ ">" ++ content ++ "</h" ++ level ++ ">" ++ procLine rest
            else before ++ "\\" ++ cmdName ++ "{" ++ content ++ "}" ++ procLine rest
 
+wrapLine :: String -> String
 wrapLine line
   | line == "" = ""
   | otherwise =
@@ -69,10 +90,12 @@ wrapLine line
         processed = procLine cont
     in "<" ++ pMark ++ ">" ++ processed ++ "</" ++ pMark ++ ">"
 
+failing :: [Char] -> IO b
 failing reason = do
   putStrLn ("Failed: " ++ reason)
   exitFailure
 
+checkLineForMod :: [Char] -> String
 checkLineForMod line
   | "\\head{3}" `isPrefixOf` line = "h3"
   | "\\head{2}" `isPrefixOf` line = "h2"
@@ -85,9 +108,10 @@ main = do
   if length args == 0
     then failing "no filename"
     else donothing
+  let outname = if checkIfthinginlist "-o" args then args !! ((checkwherethingisinlist "-o" args 0) + 1) else "out.html"
   file <- openFile (args !! ((length args) - 1)) ReadMode
   filecont <- hGetContents file
   let linescontlist = lines filecont
   let htmlLines = map wrapLine linescontlist
   let htmlCont = unlines htmlLines
-  writeFile "out.html" htmlCont
+  writeFile outname htmlCont
