@@ -5,6 +5,7 @@ import System.Exit
 import System.Environment
 import Data.List
 import Data.Maybe
+import Data.Typeable
 
 donothing :: IO ()
 donothing = return ()
@@ -62,6 +63,19 @@ specCaseTwoArgs = \c r ->
   in (c, secContent)
 
 
+liiist content rest preFin itnum
+  | itnum == read content = preFin ++ "</ul>"
+  | otherwise =
+    let nxtcontent = if preFin == "" then "<ul><li>" ++  takeWhile (/= '}') (drop 1 rest) ++ "</li>" else preFin ++ "<li>" ++ takeWhile (/= '}') (drop 1 rest) ++ "</li>"
+    in liiist content (drop 1 (dropWhile (/= '}') rest)) nxtcontent (itnum + 1)
+        
+
+unfuckitup content rest itnum
+  | read content == itnum = rest
+  | otherwise =
+    let nxtcont = drop 1 (dropWhile (/= '}') rest)
+    in unfuckitup content nxtcont (itnum + 1)
+
 p :: String -> String
 p line
   | line == "" = ""
@@ -84,6 +98,8 @@ p line
               then before ++ "<i>" ++ content ++ "</i>" ++ p rest
            else if cmdName == "break"
               then before ++ "<br>" ++ p rest
+           else if cmdName == "ulist"
+              then before ++ (liiist content rest "" 0) ++ p (unfuckitup content rest 0)
            else if cmdName == "link"
               then let ccc = specCaseTwoArgs content rest
               in before ++ "<a href=\"" ++ (cdr ccc) ++ "\">" ++ (car ccc) ++ "</a>" ++ p (drop 1 (dropWhile (/= '}') rest))
