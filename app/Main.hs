@@ -69,6 +69,11 @@ liiist content rest preFin itnum
     let nxtcontent = if preFin == "" then "<ul><li>" ++  takeWhile (/= '}') (drop 1 rest) ++ "</li>" else preFin ++ "<li>" ++ takeWhile (/= '}') (drop 1 rest) ++ "</li>"
     in liiist content (drop 1 (dropWhile (/= '}') rest)) nxtcontent (itnum + 1)
         
+ordlist content rest preFin itnum
+  | itnum == read content = preFin ++ "</ol>"
+  | otherwise =
+    let nxtcontent = if preFin == "" then "<ol><li>" ++  takeWhile (/= '}') (drop 1 rest) ++ "</li>" else preFin ++ "<li>" ++ takeWhile (/= '}') (drop 1 rest) ++ "</li>"
+    in liiist content (drop 1 (dropWhile (/= '}') rest)) nxtcontent (itnum + 1)
 
 unfuckitup content rest itnum
   | read content == itnum = rest
@@ -100,6 +105,8 @@ p line
               then before ++ "<br>" ++ p rest
            else if cmdName == "ulist"
               then before ++ (liiist content rest "" 0) ++ p (unfuckitup content rest 0)
+           else if cmdName == "olist"
+              then before ++ (ordlist content rest "" 0) ++ p (unfuckitup content rest 0)
            else if cmdName == "link"
               then let ccc = specCaseTwoArgs content rest
               in before ++ "<a href=\"" ++ (cdr ccc) ++ "\">" ++ (car ccc) ++ "</a>" ++ p (drop 1 (dropWhile (/= '}') rest))
