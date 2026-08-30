@@ -48,18 +48,18 @@ cwl = \s l i ->
        in cwl s nl ni
 
 fec :: String -> Int -> Int
-fec line bckpos =
-  let afterBackslash = drop (bckpos + 1) line
+fec = \l b ->
+  let afterBackslash = drop (b + 1) l
       cmdName = takeWhile (/= '{') afterBackslash
-      openBracePos = bckpos + 1 + length cmdName
-      afterOpen = drop (openBracePos + 1) line
+      openBracePos = b + 1 + length cmdName
+      afterOpen = drop (openBracePos + 1) l
       contentLen = length (takeWhile (/= '}') afterOpen)
   in openBracePos + 1 + contentLen
 
 
-specCaseTwoArgs content rest =
-  let secContent = takeWhile (/= '}') (drop 1 rest)
-  in (content, secContent)
+specCaseTwoArgs = \c r -> 
+  let secContent = takeWhile (/= '}') (drop 1 r)
+  in (c, secContent)
 
 
 p :: String -> String
