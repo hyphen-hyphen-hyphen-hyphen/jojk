@@ -97,25 +97,29 @@ p line
             endPos = fec line pos
             rest = drop (endPos + 1) line
             before = take pos line
-        in if cmdName == "bold"
-              then before ++ "<b>" ++ content ++ "</b>" ++ p rest
-           else if cmdName == "italic"
-              then before ++ "<i>" ++ content ++ "</i>" ++ p rest
-           else if cmdName == "break"
-              then before ++ "<br>" ++ p rest
-           else if cmdName == "ulist"
-              then before ++ (liiist content rest "" 0) ++ p (unfuckitup content rest 0)
-           else if cmdName == "olist"
-              then before ++ (ordlist content rest "" 0) ++ p (unfuckitup content rest 0)
-           else if cmdName == "link"
-              then let ccc = specCaseTwoArgs content rest
-              in before ++ "<a href=\"" ++ (cdr ccc) ++ "\">" ++ (car ccc) ++ "</a>" ++ p (drop 1 (dropWhile (/= '}') rest))
-           else if cmdName == "boldit"
-              then before ++ "<b><i>" ++ content ++ "</i></b>" ++ p rest
-           else if "head" `isPrefixOf` cmdName
-              then let level = drop 4 cmdName
-                    in before ++ "<h" ++ level ++ ">" ++ content ++ "</h" ++ level ++ ">" ++ p rest
-           else before ++ "\\" ++ cmdName ++ "{" ++ content ++ "}" ++ p rest
+         in putdaformatingon before content rest cmdName
+
+putdaformatingon before content rest cmdName = 
+  if cmdName == "bold"
+     then before ++ "<b>" ++ content ++ "</b>" ++ p rest
+  else if cmdName == "italic"
+     then before ++ "<i>" ++ content ++ "</i>" ++ p rest
+  else if cmdName == "break"
+     then before ++ "<br>" ++ p rest
+  else if cmdName == "ulist"
+     then before ++ (liiist content rest "" 0) ++ p (unfuckitup content rest 0)
+  else if cmdName == "olist"
+     then before ++ (ordlist content rest "" 0) ++ p (unfuckitup content rest 0)
+  else if cmdName == "link"
+     then let ccc = specCaseTwoArgs content rest
+     in before ++ "<a href=\"" ++ (cdr ccc) ++ "\">" ++ (car ccc) ++ "</a>" ++ p (drop 1 (dropWhile (/= '}') rest))
+  else if cmdName == "boldit"
+     then before ++ "<b><i>" ++ content ++ "</i></b>" ++ p rest
+  else if "head" `isPrefixOf` cmdName
+     then let level = drop 4 cmdName
+           in before ++ "<h" ++ level ++ ">" ++ content ++ "</h" ++ level ++ ">" ++ p rest
+  else before ++ "\\" ++ cmdName ++ "{" ++ content ++ "}" ++ p rest
+
 
 w :: String -> String
 w =
