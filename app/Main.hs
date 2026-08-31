@@ -73,7 +73,7 @@ ordlist content rest preFin itnum
   | itnum == read content = preFin ++ "</ol>"
   | otherwise =
     let nxtcontent = if preFin == "" then "<ol><li>" ++  takeWhile (/= '}') (drop 1 rest) ++ "</li>" else preFin ++ "<li>" ++ takeWhile (/= '}') (drop 1 rest) ++ "</li>"
-    in liiist content (drop 1 (dropWhile (/= '}') rest)) nxtcontent (itnum + 1)
+    in ordlist content (drop 1 (dropWhile (/= '}') rest)) nxtcontent (itnum + 1)
 
 unfuckitup content rest itnum
   | read content == itnum = rest
