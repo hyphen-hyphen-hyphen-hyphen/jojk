@@ -5,7 +5,6 @@ import System.Exit
 import System.Environment
 import Data.List
 import Data.Maybe
-import Data.Typeable
 
 donothing :: IO ()
 donothing = return ()
@@ -36,7 +35,7 @@ cil thing list
   | otherwise =
     if head list == thing
       then t
-    else let newlist = drop 1 list
+    else let newlist =  drop  1 list
     in cil thing newlist
 
 cwl :: (Eq t1, Num t2) =>
@@ -44,41 +43,58 @@ cwl :: (Eq t1, Num t2) =>
 cwl = \s l i ->
   if head l == s
     then i
-  else let nl = drop 1 l
+  else let nl =  drop  1 l
            ni = i + 1
        in cwl s nl ni
 
 fec :: String -> Int -> Int
 fec = \l b ->
-  let afterBackslash = drop (b + 1) l
-      cmdName = takeWhile (/= '{') afterBackslash
+  let afterBackslash =  drop  (b + 1) l
+      cmdName =  takeWhile (/= '{') afterBackslash
       openBracePos = b + 1 + length cmdName
-      afterOpen = drop (openBracePos + 1) l
-      contentLen = length (takeWhile (/= '}') afterOpen)
+      afterOpen =  drop  (openBracePos + 1) l
+      contentLen = length ( takeWhile (/= '}') afterOpen)
   in openBracePos + 1 + contentLen
 
 
 specCaseTwoArgs = \c r -> 
-  let secContent = takeWhile (/= '}') (drop 1 r)
+  let secContent =  takeWhile (/= '}') ( drop  1 r)
+  in (c, secContent)
+
+
+specCaseTwoArgsMark = \c r -> 
+  let secContent =  takeWhile (/= '}') ( drop  1 r)
   in (c, secContent)
 
 
 liiist content rest preFin itnum
   | itnum == read content = preFin ++ "</ul>"
   | otherwise =
-    let nxtcontent = if preFin == "" then "<ul><li>" ++  takeWhile (/= '}') (drop 1 rest) ++ "</li>" else preFin ++ "<li>" ++ takeWhile (/= '}') (drop 1 rest) ++ "</li>"
-    in liiist content (drop 1 (dropWhile (/= '}') rest)) nxtcontent (itnum + 1)
+    let nxtcontent = if preFin == "" then "<ul><li>" ++   takeWhile (/= '}') ( drop  1 rest) ++ "</li>" else preFin ++ "<li>" ++  takeWhile (/= '}') ( drop  1 rest) ++ "</li>"
+    in liiist content ( drop  1 ( dropWhile (/= '}') rest)) nxtcontent (itnum + 1)
         
+liiistMark content rest preFin itnum
+  | itnum == read content = preFin ++ "\n"
+  | otherwise =
+    let nxtcontent = if preFin == "" then "\n- " ++   takeWhile (/= '}') ( drop  1 rest) ++ "\n" else preFin ++ "- " ++  takeWhile (/= '}') ( drop  1 rest) ++ "\n"
+    in liiistMark content ( drop  1 ( dropWhile (/= '}') rest)) nxtcontent (itnum + 1)
+
+ordlistMark content rest preFin itnum
+  | itnum == read content = preFin ++ "\n"
+  | otherwise =
+    let nxtcontent = if preFin == "" then "\n" ++ show (itnum + 1) ++ ". " ++  takeWhile (/= '}') ( drop  1 rest) ++ "\n" else preFin ++ show (itnum + 1) ++ ". " ++  takeWhile (/= '}') ( drop  1 rest) ++ "\n"
+    in ordlistMark content ( drop  1 ( dropWhile (/= '}') rest)) nxtcontent (itnum + 1)
+
 ordlist content rest preFin itnum
   | itnum == read content = preFin ++ "</ol>"
   | otherwise =
-    let nxtcontent = if preFin == "" then "<ol><li>" ++  takeWhile (/= '}') (drop 1 rest) ++ "</li>" else preFin ++ "<li>" ++ takeWhile (/= '}') (drop 1 rest) ++ "</li>"
-    in ordlist content (drop 1 (dropWhile (/= '}') rest)) nxtcontent (itnum + 1)
+    let nxtcontent = if preFin == "" then "<ol><li>" ++   takeWhile (/= '}') ( drop  1 rest) ++ "</li>" else preFin ++ "<li>" ++  takeWhile (/= '}') ( drop  1 rest) ++ "</li>"
+    in ordlist content ( drop  1 ( dropWhile (/= '}') rest)) nxtcontent (itnum + 1)
 
 unfuckitup content rest itnum
   | read content == itnum = rest
   | otherwise =
-    let nxtcont = drop 1 (dropWhile (/= '}') rest)
+    let nxtcont =  drop  1 ( dropWhile (/= '}') rest)
     in unfuckitup content nxtcont (itnum + 1)
 
 p :: String -> String
@@ -89,37 +105,23 @@ p line
       Nothing -> line
       
       Just pos ->
-        let afterBackslash = drop (pos + 1) line
-            cmdName = takeWhile (/= '{') afterBackslash
+        let afterBackslash =  drop  (pos + 1) line
+            cmdName =  takeWhile (/= '{') afterBackslash
             openBracePos = pos + 1 + length cmdName
-            afterOpen = drop (openBracePos + 1) line
-            content = takeWhile (/= '}') afterOpen
+            afterOpen =  drop  (openBracePos + 1) line
+            content =  takeWhile (/= '}') afterOpen
             endPos = fec line pos
-            rest = drop (endPos + 1) line
-            before = take pos line
-         in putdaformatingon before content rest cmdName
+            rest =  drop  (endPos + 1) line
+            before =  take  pos line
+         in caseText before content rest cmdName
 
-putdaformatingon before content rest cmdName = 
-  if cmdName == "bold"
-     then before ++ "<b>" ++ content ++ "</b>" ++ p rest
-  else if cmdName == "italic"
-     then before ++ "<i>" ++ content ++ "</i>" ++ p rest
-  else if cmdName == "break"
-     then before ++ "<br>" ++ p rest
-  else if cmdName == "ulist"
-     then before ++ (liiist content rest "" 0) ++ p (unfuckitup content rest 0)
-  else if cmdName == "olist"
-     then before ++ (ordlist content rest "" 0) ++ p (unfuckitup content rest 0)
-  else if cmdName == "link"
-     then let ccc = specCaseTwoArgs content rest
-     in before ++ "<a href=\"" ++ (cdr ccc) ++ "\">" ++ (car ccc) ++ "</a>" ++ p (drop 1 (dropWhile (/= '}') rest))
-  else if cmdName == "boldit"
-     then before ++ "<b><i>" ++ content ++ "</i></b>" ++ p rest
-  else if "head" `isPrefixOf` cmdName
-     then let level = drop 4 cmdName
-           in before ++ "<h" ++ level ++ ">" ++ content ++ "</h" ++ level ++ ">" ++ p rest
-  else before ++ "\\" ++ cmdName ++ "{" ++ content ++ "}" ++ p rest
-
+caseText before content rest "bold" = before ++ "<b>" ++ content ++ "</b>" ++ p rest
+caseText before content rest "italic" =before ++ "<i>" ++ content ++ "</i>" ++ p rest
+caseText before content rest "break" =before ++ "<br>" ++ p rest
+caseText before content rest "ulist" = before ++ (liiist content rest "" 0) ++ p (unfuckitup content rest 0)
+caseText before content rest "olist"= before ++ (ordlist content rest "" 0) ++ p (unfuckitup content rest 0)
+caseText before content rest "link" =before ++ "<a href=\"" ++ (cdr (specCaseTwoArgs content rest)) ++ "\">" ++ (car (specCaseTwoArgs content rest)) ++ "</a>" ++ p (drop  1 ( dropWhile (/= '}') rest))
+caseText before content rest cmdName = before ++ "\\" ++ cmdName ++ "{" ++ content ++ "}" ++ p rest
 
 w :: String -> String
 w =
@@ -133,6 +135,48 @@ fl r = do
   putStrLn ("jojk misstag(oops): " ++ r)
   exitFailure
 
+clmbutMark line
+  | "\\head{3}" `isPrefixOf` line = "h3"
+  | "\\head{2}" `isPrefixOf` line = "h2"
+  | "\\head{1}" `isPrefixOf` line = "h1"
+  | otherwise = "h0"
+
+
+caseTextMark before content rest "bold" = before ++ "**" ++ content ++ "**" ++ pMark rest
+caseTextMark before content rest "boldit" = before ++ "***" ++ content ++ "***" ++ pMark rest
+caseTextMark before content rest "italic" = before ++ "*" ++ content ++ "*" ++ pMark rest
+caseTextMark before content rest "break" = before ++ "\\" ++ pMark rest
+caseTextMark before content rest "ulist" = before ++ (liiistMark content rest "" 0) ++ pMark (unfuckitup content rest 0)
+caseTextMark before content rest "olist"= before ++ (ordlistMark content rest "" 0) ++ pMark (unfuckitup content rest 0)
+caseTextMark before content rest "link" = before ++ "[" ++ (car (specCaseTwoArgsMark content rest)) ++ "](" ++ (cdr (specCaseTwoArgsMark content rest)) ++ ")" ++ pMark ( drop  1 ( dropWhile (/= '}') rest))
+caseTextMark before content rest cmdName = before ++ "\\" ++ cmdName ++ "{" ++ content ++ "}" ++ pMark rest
+
+pMark :: [Char] -> [Char]
+pMark line
+  | line == "" = ""
+  | otherwise =
+    case fb line of
+      Nothing -> line
+      
+      Just pos ->
+        let afterBackslash =  drop  (pos + 1) line
+            cmdName =  takeWhile (/= '{') afterBackslash
+            openBracePos = pos + 1 + length cmdName
+            afterOpen =  drop  (openBracePos + 1) line
+            content =  takeWhile (/= '}') afterOpen
+            endPos = fec line pos
+            rest =  drop  (endPos + 1) line
+            before =  take  pos line
+         in caseTextMark before content rest cmdName
+    
+wMark :: String -> [Char]
+wMark = \l ->
+  let pm = clmbutMark l
+      c = rlm l
+      pro = pMark c 
+      heed= ( take  (read ( drop  1 pm)) ( repeat  "#")) ++ [" "]
+  in concat (heed ++ [pro])
+
 clm :: [Char] -> String
 clm line
   | "\\head{3}" `isPrefixOf` line = "h3"
@@ -140,9 +184,15 @@ clm line
   | "\\head{1}" `isPrefixOf` line = "h1"
   | otherwise = "p"
 
-re = \l ->
-  if l == "<p></p>" then "<br>" else l
+re :: String -> String
+re "<p></p>" = "<br>"
+re l = l
 
+reMark :: [Char] -> [Char]
+reMark (' ':aa) = aa
+reMark l = l
+
+pr :: IO ()
 pr = do
   putStrLn "     /)/)/) /).-') "
   putStrLn "    ////((.'_.--'   .(\\(\\(\\                   n/(/.')_         . "
@@ -174,12 +224,15 @@ main = do
   if length a == 0
     then fl "no filename"
     else donothing
-  let on = if cil "-o" a then a !! ((cwl "-o" a 0) + 1) else "out.html"
-  f <- openFile (a !! ((length a) - 1)) ReadMode
+  let outFormat = if cil "-m" a then "markdown" else "html"
+  let end = if outFormat == "markdown" then "md" else "html"
+  let on = if cil "-o" a then a !! ((cwl "-o" a 0) + 1) else "out." ++ end
+  let outFormat = if cil "-m" a then "markdown" else "html"
+  f <- openFile (a !! (( length a) - 1)) ReadMode
   fc <- hGetContents f
   let lcl = lines fc
-  let hl = map w lcl
-  let hl2 = map re hl
+  let hl = if outFormat == "html" then map w lcl else map wMark lcl
+  let hl2 = if outFormat == "html" then map re hl else map reMark hl
   let hc = unlines hl2
   writeFile on hc
-  pr
+  if cil "-q" a then donothing else pr
