@@ -29,7 +29,7 @@ The command for bold text looks like this:
 \bold{text}
 ```
 
-and it outputs:
+and it outputs: \
 HTML
 ```HTML
 <b>text</b>
@@ -46,7 +46,7 @@ The command for italic text looks like this:
 \italic{text}
 ```
 
-and it outputs:
+and it outputs: \
 HTML
 ```HTML
 <i>text</i>
@@ -63,7 +63,7 @@ If you want both bold and italic text use boldit:
 \boldit{text}
 ```
 
-and it outputs:
+and it outputs: \
 HTML
 ```HTML
 <b><i>text</i></b>
@@ -78,7 +78,7 @@ MarkDown
 ```
 \break{}
 ```
-Inserts a line break
+Inserts a line break \
 HTML:
 ```HTML
 <br>
@@ -99,7 +99,7 @@ For example:
 ```
 \ulist{3}{this is}{a}{list}
 ```
-outputs:
+outputs: \
 HTML
 ```
 <ul>
@@ -126,7 +126,7 @@ For example:
 ```
 \olist{3}{this is}{a}{list}
 ```
-outputs:
+outputs: \
 HTML
 ```
 <ol>
@@ -144,14 +144,14 @@ Markdown
 
 #### Block
 
-The `block` command makes the text inside the command a blockquote by wrapping it in `<blockquote>` tags when outputing to HTML.
-When outputing to Markdown, the entire line becomes a blockquote, where the command is and what is in it does not matter.
-For example:
+The `block` command makes the text inside the command a blockquote by wrapping it in `<blockquote>` tags when outputing to HTML. \
+When outputing to Markdown, the entire line becomes a blockquote, where the command is and what is in it does not matter. \
+For example: \
 Command
 ```
 Text\block{more text} more more text
 ```
-outputs:
+outputs: \
 HTML
 ```html
 Text<blockquote>more text</blockquote> more more text
@@ -166,8 +166,8 @@ Markdown
 ```
 \link{text}{link}
 ```
-Creates a link with text *text* linking to *link*
-Example output:
+Creates a link with text *text* linking to *link* \
+Example output: \
 HTML
 ```html
 <a href="link">text</a>
@@ -183,7 +183,7 @@ The head command should always be placed at the beginning of the line, and it ma
 ```
 \head{2}text
 ```
-outputs
+outputs \
 HTML
 ```
 <h2>text</h2>
