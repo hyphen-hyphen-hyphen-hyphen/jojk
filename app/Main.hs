@@ -121,6 +121,7 @@ caseText before content rest "break" =before ++ "<br>" ++ p rest
 caseText before content rest "ulist" = before ++ (liiist content rest "" 0) ++ p (unfuckitup content rest 0)
 caseText before content rest "olist"= before ++ (ordlist content rest "" 0) ++ p (unfuckitup content rest 0)
 caseText before content rest "link" =before ++ "<a href=\"" ++ (cdr (specCaseTwoArgs content rest)) ++ "\">" ++ (car (specCaseTwoArgs content rest)) ++ "</a>" ++ p (drop  1 ( dropWhile (/= '}') rest))
+caseText before content rest "block" = before ++ "<blockquote>" ++ content ++ "</blockquote>" ++ p rest
 caseText before content rest cmdName = before ++ "\\" ++ cmdName ++ "{" ++ content ++ "}" ++ p rest
 
 w :: String -> String
@@ -149,6 +150,7 @@ caseTextMark before content rest "break" = before ++ "\\" ++ pMark rest
 caseTextMark before content rest "ulist" = before ++ (liiistMark content rest "" 0) ++ pMark (unfuckitup content rest 0)
 caseTextMark before content rest "olist"= before ++ (ordlistMark content rest "" 0) ++ pMark (unfuckitup content rest 0)
 caseTextMark before content rest "link" = before ++ "[" ++ (car (specCaseTwoArgsMark content rest)) ++ "](" ++ (cdr (specCaseTwoArgsMark content rest)) ++ ")" ++ pMark ( drop  1 ( dropWhile (/= '}') rest))
+caseTextMark before content rest "block" = "> " ++ before ++ content ++  p rest
 caseTextMark before content rest cmdName = before ++ "\\" ++ cmdName ++ "{" ++ content ++ "}" ++ pMark rest
 
 pMark :: [Char] -> [Char]
