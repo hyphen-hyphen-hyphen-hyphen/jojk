@@ -2,13 +2,80 @@
 
 Jojk is a command based markup language with a parser written in haskell
 
+## Installation
+
+### Binary
+
+Download the binary from the latest release and either execute direclty or place in `$PATH`
+
+### From source
+
+#### With GHC
+
+Make sure you have [ghc](https://www.haskell.org/ghc/) installed and either clone the repository or download directly the `app/Main.hs` file. \
+Navigate to the directory with the `Main.hs` file and run 
+```
+ghc Main.hs
+```
+This will create the files
+```
+Main
+Main.hi
+Main.o
+```
+You can disregard `Main.hi` and `Main.o` \
+The `Main` file is the ELF and the only file needed \
+Now to run it you can either run it directly with 
+```
+./Main
+```
+Or move it to `$PATH`
+```
+sudo cp Main /usr/bin/jojk
+jojk
+```
+
+#### With cabal
+
+Make sure you have [cabal](https://www.haskell.org/cabal/) installed and clone the repository with
+```
+git clone https://github.com/hyphen-hyphen-hyphen-hyphen/jojk.git
+cd jojk
+```
+
 ## Usage
 
-Jojk commands consist of a backslash (\) the command (for example "bold") and brackets({}) containing the command body. For example `\bold{text}`
+Run `jojk` with any potential flags and the filename of the jojk file as the last argument \
+For example:
+```
+jojk -m file.jojk
+```
+
+### Flags
+
+| `-o` | specifies an output file |
+| `-m` | outputs in markdown instead of HTML |
+| `-q` | supersses the printing of ascii art |
+
+
+## Writing jojk files
 
 ### Commands
 
-Here is a list of all commands and their output in HTML and MarkDown, see header for more information
+Jojk commands consist of a backslash (\) the command (for example "bold") and brackets({}) containing the command content. For example `\bold{text}`
+
+#### Legend
+
+```
+     content
+       ↓
+\xxxx{xxxx}
+  ↑  |____|
+command |
+      term
+```
+
+#### Table
 
 | Jojk | HTML | MarkDown |
 | ---- | ---- | -------- |
@@ -144,9 +211,10 @@ Markdown
 
 #### Block
 
-The `block` command makes the text inside the command a blockquote by wrapping it in `<blockquote>` tags when outputing to HTML. \
-When outputing to Markdown, the entire line becomes a blockquote, where the command is and what is in it does not matter. \
+The `block` command makes the content a blockquote by wrapping it in `<blockquote>` tags when outputing to HTML. \
+When outputing to Markdown, the entire line becomes a blockquote, where the command is and what the content is does not matter. \
 For example: \
+>>>>>>> 7129044 (readme update)
 Command
 ```
 Text\block{more text} more more text
