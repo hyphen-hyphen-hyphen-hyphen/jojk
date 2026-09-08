@@ -261,3 +261,7 @@ Markdown
 ```
 ## text
 ```
+
+## License
+
+This project uses the BSD 3-clause license, see the `LICENSE` file for more details
