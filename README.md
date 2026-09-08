@@ -53,6 +53,8 @@ jojk -m file.jojk
 
 ### Flags
 
+| Flags | |
+| ---- | ----- |
 | `-o` | specifies an output file |
 | `-m` | outputs in markdown instead of HTML |
 | `-q` | supersses the printing of ascii art |
