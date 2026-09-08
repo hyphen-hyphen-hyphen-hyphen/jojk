@@ -24,7 +24,7 @@ Main.hi
 Main.o
 ```
 You can disregard `Main.hi` and `Main.o` \
-The `Main` file is the ELF and the only file needed \
+The `Main` file is the executable and the only file needed \
 Now to run it you can either run it directly with 
 ```
 ./Main
@@ -57,7 +57,7 @@ jojk -m file.jojk
 | ---- | ----- |
 | `-o` | specifies an output file |
 | `-m` | outputs in markdown instead of HTML |
-| `-q` | supersses the printing of ascii art |
+| `-q` | suppresses the printing of ascii art |
 
 
 ## Writing jojk files
@@ -213,10 +213,9 @@ Markdown
 
 #### Block
 
-The `block` command makes the content a blockquote by wrapping it in `<blockquote>` tags when outputing to HTML. \
-When outputing to Markdown, the entire line becomes a blockquote, where the command is and what the content is does not matter. \
+The `block` command makes the content a blockquote by wrapping it in `<blockquote>` tags when outputting to HTML. \
+When outputting to Markdown, the entire line becomes a blockquote, where the command is and what the content is does not matter. \
 For example: \
->>>>>>> 7129044 (readme update)
 Command
 ```
 Text\block{more text} more more text
