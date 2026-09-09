@@ -4,6 +4,12 @@ Jojk is a command based markup language with a parser written in haskell
 
 ## Installation
 
+### one-liner with curl and sh
+
+```
+curl -Lf https://github.com/hyphen-hyphen-hyphen-hyphen/jojk/blob/trunk/install.sh | sh
+```
+
 ### Binary
 
 Download the binary from the latest release and either execute direclty or place in `$PATH`
@@ -42,6 +48,15 @@ Make sure you have [cabal](https://www.haskell.org/cabal/) installed and clone t
 git clone https://github.com/hyphen-hyphen-hyphen-hyphen/jojk.git
 cd jojk
 ```
+Then run
+```
+cabal build
+```
+to build jojk and
+```
+cabal install
+```
+to install it
 
 ## Usage
 
@@ -55,7 +70,7 @@ jojk -m file.jojk
 
 | Flags | |
 | ---- | ----- |
-| `-o` | specifies an output file |
+| `-o <file>` | specifies an output file |
 | `-m` | outputs in markdown instead of HTML |
 | `-q` | suppresses the printing of ascii art |
 
