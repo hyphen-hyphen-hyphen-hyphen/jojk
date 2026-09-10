@@ -115,14 +115,14 @@ p line
             before =  take  pos line
          in caseText before content rest cmdName
 
-caseText before content rest "bold" = before ++ "<b>" ++ content ++ "</b>" ++ p rest
-caseText before content rest "italic" =before ++ "<i>" ++ content ++ "</i>" ++ p rest
-caseText before content rest "break" =before ++ "<br>" ++ p rest
-caseText before content rest "ulist" = before ++ (liiist content rest "" 0) ++ p (unfuckitup content rest 0)
-caseText before content rest "olist"= before ++ (ordlist content rest "" 0) ++ p (unfuckitup content rest 0)
+caseText before content rest "bold" = before ++ "<b>" ++ p content ++ "</b>" ++ (takeWhile (/= '}') (p rest))++ dropWhile (== '}') (takeWhile (/= '}') (p rest))
+caseText before content rest "italic" =before ++ "<i>" ++ p content ++ "</i>" ++ (takeWhile (/= '}') (p rest))++ dropWhile (== '}') (takeWhile (/= '}') (p rest))
+caseText before content rest "break" =before ++ "<br>" ++ (takeWhile (/= '}') (p rest))++ dropWhile (== '}') (takeWhile (/= '}') (p rest))
+caseText before content rest "ulist" = before ++ p (liiist content rest "" 0) ++ (takeWhile (/= '}') (p (unfuckitup content rest 0)))++ dropWhile (== '}') (takeWhile (/= '}') (p (unfuckitup content rest 0)))
+caseText before content rest "olist" = before ++ p (ordlist content rest "" 0) ++ (takeWhile (/= '}') (p (unfuckitup content rest 0)))++ dropWhile (== '}') (takeWhile (/= '}') (p (unfuckitup content rest 0)))
 caseText before content rest "link" =before ++ "<a href=\"" ++ (cdr (specCaseTwoArgs content rest)) ++ "\">" ++ (car (specCaseTwoArgs content rest)) ++ "</a>" ++ p (drop  1 ( dropWhile (/= '}') rest))
-caseText before content rest "block" = before ++ "<blockquote>" ++ content ++ "</blockquote>" ++ p rest
-caseText before content rest cmdName = before ++ "\\" ++ cmdName ++ "{" ++ content ++ "}" ++ p rest
+caseText before content rest "block" = before ++ "<blockquote>" ++ p content ++ "</blockquote>" ++ (takeWhile (/= '}') (p rest))++ dropWhile (== '}') (takeWhile (/= '}') (p rest))
+caseText before content rest cmdName = before ++ "\\" ++ cmdName ++ "{" ++ p content ++ "}" ++ (takeWhile (/= '}') (p rest))++ dropWhile (== '}') (takeWhile (/= '}') (p rest))
 
 w :: String -> String
 w =
@@ -143,15 +143,15 @@ clmbutMark line
   | otherwise = "h0"
 
 
-caseTextMark before content rest "bold" = before ++ "**" ++ content ++ "**" ++ pMark rest
-caseTextMark before content rest "boldit" = before ++ "***" ++ content ++ "***" ++ pMark rest
-caseTextMark before content rest "italic" = before ++ "*" ++ content ++ "*" ++ pMark rest
-caseTextMark before content rest "break" = before ++ "\\" ++ pMark rest
-caseTextMark before content rest "ulist" = before ++ (liiistMark content rest "" 0) ++ pMark (unfuckitup content rest 0)
-caseTextMark before content rest "olist"= before ++ (ordlistMark content rest "" 0) ++ pMark (unfuckitup content rest 0)
-caseTextMark before content rest "link" = before ++ "[" ++ (car (specCaseTwoArgsMark content rest)) ++ "](" ++ (cdr (specCaseTwoArgsMark content rest)) ++ ")" ++ pMark ( drop  1 ( dropWhile (/= '}') rest))
-caseTextMark before content rest "block" = "> " ++ before ++ content ++  p rest
-caseTextMark before content rest cmdName = before ++ "\\" ++ cmdName ++ "{" ++ content ++ "}" ++ pMark rest
+caseTextMark before content rest "bold" = before ++ "**" ++ pMark content ++ "**" ++ takeWhile (/= '}') (pMark rest) ++ dropWhile (== '}') (takeWhile (/= '}') (pMark rest))
+caseTextMark before content rest "boldit" = before ++ "***" ++ pMark content ++ "***" ++ takeWhile (/= '}') (pMark rest) ++ dropWhile (== '}') (takeWhile (/= '}') (pMark rest))
+caseTextMark before content rest "italic" = before ++ "*" ++ pMark content ++ "*" ++ takeWhile (/= '}') (pMark rest) ++ dropWhile (== '}') (takeWhile (/= '}') (pMark rest))
+caseTextMark before content rest "break" = before ++ "\\" ++ takeWhile (/= '}') (pMark rest) ++ dropWhile (== '}') (takeWhile (/= '}') (pMark rest))
+caseTextMark before content rest "ulist" = before ++ pMark (liiistMark content rest "" 0) ++ (takeWhile (/= '}') (p (unfuckitup content rest 0)))++ dropWhile (== '}') (takeWhile (/= '}') (p (unfuckitup content rest 0)))
+caseTextMark before content rest "olist"= before ++ pMark (ordlistMark content rest "" 0) ++ (takeWhile (/= '}') (p (unfuckitup content rest 0)))++ dropWhile (== '}') (takeWhile (/= '}') (p (unfuckitup content rest 0)))
+caseTextMark before content rest "link" = before ++ "[" ++ pMark (car (specCaseTwoArgsMark content rest)) ++ "](" ++ (cdr (specCaseTwoArgsMark content rest)) ++ ")" ++ pMark ( drop  1 ( dropWhile (/= '}') rest))
+caseTextMark before content rest "block" = "> " ++ before ++ pMark content ++ takeWhile (/= '}') (pMark rest) ++ dropWhile (== '}') (takeWhile (/= '}') (pMark rest))
+caseTextMark before content rest cmdName = before ++ "\\" ++ cmdName ++ "{" ++ pMark content ++ "}" ++ pMark rest
 
 pMark :: [Char] -> [Char]
 pMark line
@@ -189,6 +189,11 @@ clm line
 re :: String -> String
 re "<p></p>" = "<br>"
 re l = l
+
+-- remendpar lst
+--   | lst == [] = []
+--   | otherwise =
+--     if cil '}' lst then take (fromMaybe (fb lst)) ++ drop fromMaybe (((fb lst) + 1)) lst else lst
 
 reMark :: [Char] -> [Char]
 reMark (' ':aa) = aa

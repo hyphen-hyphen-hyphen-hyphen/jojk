@@ -75,11 +75,42 @@ jojk -m file.jojk
 | `-q` | suppresses the printing of ascii art |
 
 
+## Example jojk file
+
+```
+\head{1}Document header
+
+Document about \bold{important} things:
+\olist{4}{thing 1}{thing 2}{thing 3}{thing 4}
+\block{Note: very important thing}
+normal paragraph
+\boldit{very} important thing
+\break{}
+just a little \italic{emphasis}
+```
+
 ## Writing jojk files
 
 ### Commands
 
 Jojk commands consist of a backslash (\) the command (for example "bold") and brackets({}) containing the command content. For example `\bold{text}`
+
+#### Command nesting
+
+Command nesting is supported and should work fine for simpler inputs as exampled below, howeaver, it is very buggy due to the not so elegant implementation. If your output has stray brackets or missplaced elements, its most likely due to command nesting. \
+Example of working command nesting:
+```
+\bold{text\italic{text}}text
+```
+And output: \
+HTML
+```
+<p><b>text<i>text</i></b></p>
+```
+Markdown
+```
+**text*text***
+```
 
 #### Legend
 
@@ -276,6 +307,14 @@ Markdown
 ```
 ## text
 ```
+
+## Security policy
+
+See SECURITY.md
+
+## Contributing
+
+Submit a PR with your contribution
 
 ## License
 
