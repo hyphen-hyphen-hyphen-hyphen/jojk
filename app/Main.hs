@@ -6,9 +6,6 @@ import System.Environment
 import Data.List
 import Data.Maybe
 
-donothing :: IO ()
-donothing = return ()
-
 -- make it more *lispy*
 car :: (b,a) -> b
 cdr :: (a, b) -> b
@@ -29,23 +26,18 @@ rlm line
 fb :: String -> Maybe Int
 fb = (elemIndex '\\')
 
-cil :: Eq t => t -> [t] -> Bool
-cil thing list
-  | list == [] = nil
-  | otherwise =
-    if head list == thing
-      then t
-    else let newlist =  drop  1 list
-    in cil thing newlist
+cil :: String -> [String] -> Bool
+cil _ [] = nil
+cil thing (x:xs) = if thing == x then t else cil thing xs
 
-cwl :: (Eq t1, Num t2) =>
-                           t1 -> [t1] -> t2 -> t2
-cwl = \s l i ->
-  if head l == s
-    then i
-  else let nl =  drop  1 l
-           ni = i + 1
-       in cwl s nl ni
+checkWhereInList :: String -> [String] -> Int -> Int
+checkWhereInList _ [] _ = -1
+
+checkWhereInList hing (a:xs) int
+  | a == hing = int
+  | otherwise =
+    let nwInt = int + 1
+    in checkWhereInList hing xs nwInt
 
 fec :: String -> Int -> Int
 fec = \l b ->
@@ -57,40 +49,47 @@ fec = \l b ->
   in openBracePos + 1 + contentLen
 
 
+specCaseTwoArgs :: any -> String -> (any, String)
 specCaseTwoArgs = \c r -> 
   let secContent =  takeWhile (/= '}') ( drop  1 r)
   in (c, secContent)
 
 
+specCaseTwoArgsMark :: any -> String -> (any, String)
 specCaseTwoArgsMark = \c r -> 
   let secContent =  takeWhile (/= '}') ( drop  1 r)
   in (c, secContent)
 
 
+liiist :: String -> String -> String -> Int -> String
 liiist content rest preFin itnum
   | itnum == read content = preFin ++ "</ul>"
   | otherwise =
     let nxtcontent = if preFin == "" then "<ul><li>" ++   takeWhile (/= '}') ( drop  1 rest) ++ "</li>" else preFin ++ "<li>" ++  takeWhile (/= '}') ( drop  1 rest) ++ "</li>"
     in liiist content ( drop  1 ( dropWhile (/= '}') rest)) nxtcontent (itnum + 1)
         
+liiistMark :: String -> String -> String -> Int -> String
 liiistMark content rest preFin itnum
   | itnum == read content = preFin ++ "\n"
   | otherwise =
     let nxtcontent = if preFin == "" then "\n- " ++   takeWhile (/= '}') ( drop  1 rest) ++ "\n" else preFin ++ "- " ++  takeWhile (/= '}') ( drop  1 rest) ++ "\n"
     in liiistMark content ( drop  1 ( dropWhile (/= '}') rest)) nxtcontent (itnum + 1)
 
+ordlistMark :: String -> String -> String -> Int -> String
 ordlistMark content rest preFin itnum
   | itnum == read content = preFin ++ "\n"
   | otherwise =
     let nxtcontent = if preFin == "" then "\n" ++ show (itnum + 1) ++ ". " ++  takeWhile (/= '}') ( drop  1 rest) ++ "\n" else preFin ++ show (itnum + 1) ++ ". " ++  takeWhile (/= '}') ( drop  1 rest) ++ "\n"
     in ordlistMark content ( drop  1 ( dropWhile (/= '}') rest)) nxtcontent (itnum + 1)
 
+ordlist :: String -> String -> String -> Int -> String
 ordlist content rest preFin itnum
   | itnum == read content = preFin ++ "</ol>"
   | otherwise =
     let nxtcontent = if preFin == "" then "<ol><li>" ++   takeWhile (/= '}') ( drop  1 rest) ++ "</li>" else preFin ++ "<li>" ++  takeWhile (/= '}') ( drop  1 rest) ++ "</li>"
     in ordlist content ( drop  1 ( dropWhile (/= '}') rest)) nxtcontent (itnum + 1)
 
+unfuckitup :: String -> String -> Int -> String
 unfuckitup content rest itnum
   | read content == itnum = rest
   | otherwise =
@@ -115,9 +114,10 @@ p line
             before =  take  pos line
          in caseText before content rest cmdName
 
+caseText :: String -> String -> String -> String -> String
 caseText before content rest "bold" = before ++ "<b>" ++ p content ++ "</b>" ++ (takeWhile (/= '}') (p rest))++ dropWhile (== '}') (takeWhile (/= '}') (p rest))
 caseText before content rest "italic" =before ++ "<i>" ++ p content ++ "</i>" ++ (takeWhile (/= '}') (p rest))++ dropWhile (== '}') (takeWhile (/= '}') (p rest))
-caseText before content rest "break" =before ++ "<br>" ++ (takeWhile (/= '}') (p rest))++ dropWhile (== '}') (takeWhile (/= '}') (p rest))
+caseText before _ rest "break" =before ++ "<br>" ++ (takeWhile (/= '}') (p rest))++ dropWhile (== '}') (takeWhile (/= '}') (p rest))
 caseText before content rest "ulist" = before ++ p (liiist content rest "" 0) ++ (takeWhile (/= '}') (p (unfuckitup content rest 0)))++ dropWhile (== '}') (takeWhile (/= '}') (p (unfuckitup content rest 0)))
 caseText before content rest "olist" = before ++ p (ordlist content rest "" 0) ++ (takeWhile (/= '}') (p (unfuckitup content rest 0)))++ dropWhile (== '}') (takeWhile (/= '}') (p (unfuckitup content rest 0)))
 caseText before content rest "link" =before ++ "<a href=\"" ++ (cdr (specCaseTwoArgs content rest)) ++ "\">" ++ (car (specCaseTwoArgs content rest)) ++ "</a>" ++ p (drop  1 ( dropWhile (/= '}') rest))
@@ -136,6 +136,7 @@ fl r = do
   putStrLn ("jojk misstag(oops): " ++ r)
   exitFailure
 
+clmbutMark :: String -> String
 clmbutMark line
   | "\\head{3}" `isPrefixOf` line = "h3"
   | "\\head{2}" `isPrefixOf` line = "h2"
@@ -143,10 +144,11 @@ clmbutMark line
   | otherwise = "h0"
 
 
+caseTextMark :: String -> String -> String -> String -> String
 caseTextMark before content rest "bold" = before ++ "**" ++ pMark content ++ "**" ++ takeWhile (/= '}') (pMark rest) ++ dropWhile (== '}') (takeWhile (/= '}') (pMark rest))
 caseTextMark before content rest "boldit" = before ++ "***" ++ pMark content ++ "***" ++ takeWhile (/= '}') (pMark rest) ++ dropWhile (== '}') (takeWhile (/= '}') (pMark rest))
 caseTextMark before content rest "italic" = before ++ "*" ++ pMark content ++ "*" ++ takeWhile (/= '}') (pMark rest) ++ dropWhile (== '}') (takeWhile (/= '}') (pMark rest))
-caseTextMark before content rest "break" = before ++ "\\" ++ takeWhile (/= '}') (pMark rest) ++ dropWhile (== '}') (takeWhile (/= '}') (pMark rest))
+caseTextMark before _ rest "break" = before ++ "\\" ++ takeWhile (/= '}') (pMark rest) ++ dropWhile (== '}') (takeWhile (/= '}') (pMark rest))
 caseTextMark before content rest "ulist" = before ++ pMark (liiistMark content rest "" 0) ++ (takeWhile (/= '}') (p (unfuckitup content rest 0)))++ dropWhile (== '}') (takeWhile (/= '}') (p (unfuckitup content rest 0)))
 caseTextMark before content rest "olist"= before ++ pMark (ordlistMark content rest "" 0) ++ (takeWhile (/= '}') (p (unfuckitup content rest 0)))++ dropWhile (== '}') (takeWhile (/= '}') (p (unfuckitup content rest 0)))
 caseTextMark before content rest "link" = before ++ "[" ++ pMark (car (specCaseTwoArgsMark content rest)) ++ "](" ++ (cdr (specCaseTwoArgsMark content rest)) ++ ")" ++ pMark ( drop  1 ( dropWhile (/= '}') rest))
@@ -230,11 +232,10 @@ main = do
   a <- getArgs
   if length a == 0
     then fl "no filename"
-    else donothing
+    else return ()
   let outFormat = if cil "-m" a then "markdown" else "html"
   let end = if outFormat == "markdown" then "md" else "html"
-  let on = if cil "-o" a then a !! ((cwl "-o" a 0) + 1) else "out." ++ end
-  let outFormat = if cil "-m" a then "markdown" else "html"
+  let on = if cil "-o" a then a !! ((checkWhereInList "-o" a 0) + 1) else "out." ++ end
   f <- openFile (a !! (( length a) - 1)) ReadMode
   fc <- hGetContents f
   let lcl = lines fc
@@ -242,4 +243,4 @@ main = do
   let hl2 = if outFormat == "html" then map re hl else map reMark hl
   let hc = unlines hl2
   writeFile on hc
-  if cil "-q" a then donothing else pr
+  if cil "-q" a then return () else pr
