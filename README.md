@@ -100,7 +100,7 @@ Jojk commands consist of a backslash (\) the command (for example "bold") and br
 Command nesting is supported and should work fine for simpler inputs as exampled below, howeaver, it is very buggy due to the not so elegant implementation. If your output has stray brackets or missplaced elements, its most likely due to command nesting. \
 Example of working command nesting:
 ```
-\bold{text\italic{text}}text
+\bold{text\italic{text}}
 ```
 And output: \
 HTML
