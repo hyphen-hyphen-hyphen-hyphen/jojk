@@ -9,7 +9,7 @@ Jojk is a command based markup language with a parser written in haskell
 ### one-liner with curl and sh
 
 ```
-curl -Lf https://github.com/hyphen-hyphen-hyphen-hyphen/jojk/blob/trunk/install.sh | sh
+curl -Lf https://raw.github.com/hyphen-hyphen-hyphen-hyphen/jojk/blob/trunk/install.sh | sh
 ```
 
 ### Binary
