@@ -2,6 +2,8 @@
 
 Jojk is a command based markup language with a parser written in haskell
 
+[![asciicast](https://asciinema.org/a/iD1tDSTRBRWEYCEw.svg)](https://asciinema.org/a/iD1tDSTRBRWEYCEw)
+
 ## Installation
 
 ### one-liner with curl and sh
