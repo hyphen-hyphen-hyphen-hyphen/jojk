@@ -1,5 +1,4 @@
 module Main (main) where
-
 import System.IO
 import System.Exit
 import System.Environment
@@ -187,10 +186,6 @@ re :: String -> String
 re "<p></p>" = "<br>"
 re l = l
 
--- remendpar lst
---   | lst == [] = []
---   | otherwise =
---     if cil '}' lst then take (fromMaybe (fb lst))++drop fromMaybe (((fb lst) + 1)) lst else lst
 
 reMark :: [Char] -> [Char]
 reMark (' ':aa) = aa
@@ -234,8 +229,7 @@ main = do
   f <- openFile (a !! (( length a) - 1)) ReadMode
   fc <- hGetContents f
   let lcl = lines fc
-  let hl = if outFormat == "html" then map w lcl else map wMark lcl
-  let hl2 = if outFormat == "html" then map re hl else map reMark hl
+  let hl2 = if outFormat == "html" then map (re . w) lcl else map (reMark . wMark) lcl
   let hc = unlines hl2
   writeFile on hc
   if cil "-q" a then return () else pr
